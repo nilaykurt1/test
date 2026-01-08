@@ -1,0 +1,6 @@
+
+{
+  "rewrites": [
+    { "source": "/.netlify/functions/chat", "destination": "/api/chat" }
+  ]
+}

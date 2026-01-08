@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nilay's Workshopplaner</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
+      background: #fff3f8; color: #333;
+    }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #ffd9e6; padding: 20px;
+    }
+    header img { height: 50px; }
+    main { padding: 20px; max-width: 1000px; margin: auto; }
+    h1, h2 { color: #c44584; }
+    label { font-weight: bold; margin-top: 12px; display: block; }
+    select, input[type="text"], textarea {
+      width: 100%; padding: 8px; margin-top: 5px;
+      border-radius: 6px; border: 1px solid #ccc;
+    }
+    button {
+      background: #c44584; color: white; border: none;
+      padding: 10px 20px; border-radius: 6px; cursor: pointer;
+      margin: 20px 10px 0 0;
+    }
+    .chat-container {
+      position: fixed; right: 10px; top: 100px; width: 280px; height: 400px;
+      background: white; border: 1px solid #ddd; border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 10px;
+      font-size: 0.9em; z-index: 1000; display: flex; flex-direction: column;
+    }
+    .chat-log {
+      flex: 1; overflow-y: auto; background: #fafafa;
+      padding: 10px; border-radius: 5px; border: 1px solid #eee;
+    }
+    .chat-input {
+      display: flex; margin-top: 10px;
+    }
+    .chat-input input {
+      flex: 1; padding: 5px;
+    }
+    .chat-input button {
+      background: #c44584; color: white; border: none;
+      padding: 5px 10px; cursor: pointer;
+    }
+    .plan {
+      background: white; padding: 20px; border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05); margin-top: 30px;
+    }
+    .phase {
+      margin-bottom: 20px; padding: 15px; background: #fbe4ef;
+      border-left: 5px solid #c44584; border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Nilay's Workshopplaner</h2>
+    <img src="logo.png" alt="Logo" />
+  </header>
+  <main>
+    <h1>Workshop konfigurieren</h1>
+
+    <label>Teilnehmeranzahl</label>
+    <select><option>1</option><option>2</option><option>3</option><option>4</option>
+    <option>5</option><option>6</option><option>7</option><option>8</option>
+    <option>9</option><option>10</option><option>10+</option></select>
+
+    <label>Dauer</label>
+    <select><option>1 Stunde</option><option>2 Stunden</option><option>3 Stunden</option>
+    <option>4 Stunden</option><option>5 Stunden</option><option>6 Stunden</option>
+    <option>7 Stunden</option><option>8 Stunden</option><option>1 Tag</option>
+    <option>2 Tage</option><option>3 Tage</option></select>
+
+    <label>Zielgruppe</label>
+    <input type="text" placeholder="z. B. Führungskräfte" />
+
+    <label>Thema</label>
+    <input type="text" placeholder="z. B. Vertriebsstrategie 2025" />
+
+    <label>Format</label>
+    <select><option>Vor Ort</option><option>Online</option><option>Hybrid</option></select>
+
+    <label>Methoden</label>
+    <textarea rows="4" placeholder="Brainstorming, Simulation, ..."></textarea>
+
+    <button onclick="document.getElementById('workshopPlan').scrollIntoView({behavior: 'smooth'})">➤ Workshop anzeigen</button>
+    <button onclick="downloadPDF()">📄 Als PDF speichern</button>
+
+    <div id="workshopPlan" class="plan">
+      <h2>Dein Workshop-Fahrplan</h2>
+      <div class="phase">
+        <h3>Phase 1: Ankommen & Check-in</h3>
+        <p><strong>Dauer:</strong> 30 Minuten</p>
+        <p><strong>Ziel:</strong> Teilnehmer abholen</p>
+        <p><strong>Methode:</strong> Icebreaker, kurzes Vorstellen</p>
+      </div>
+      <div class="phase">
+        <h3>Phase 2: Zielgruppe & Thema</h3>
+        <p><strong>Dauer:</strong> 90 Minuten</p>
+        <p><strong>Ziel:</strong> Verständnis schaffen</p>
+        <p><strong>Methode:</strong> Impulsvortrag, Diskussion</p>
+      </div>
+      <div class="phase">
+        <h3>Phase 3: Erarbeiten & Üben</h3>
+        <p><strong>Dauer:</strong> 3 Stunden</p>
+        <p><strong>Ziel:</strong> Anwendung ermöglichen</p>
+        <p><strong>Methode:</strong> Gruppenarbeit, Simulation</p>
+      </div>
+      <div class="phase">
+        <h3>Phase 4: Abschluss & Transfer</h3>
+        <p><strong>Dauer:</strong> 60 Minuten</p>
+        <p><strong>Ziel:</strong> Ergebnisse sichern, Transfer schaffen</p>
+        <p><strong>Methode:</strong> Feedback-Runde, nächste Schritte</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="chat-container">
+    <h3>Nilay’s Chat 💬</h3>
+    <div class="chat-log" id="chatlog">
+      <div><strong>Nilay:</strong> Hallo! Ich begleite dich durch deinen Workshop.</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Frage mich etwas..." />
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const chatlog = document.getElementById("chatlog");
+      const userMessage = input.value;
+      if (!userMessage.trim()) return;
+      chatlog.innerHTML += `<div><strong>Du:</strong> ${userMessage}</div>`;
+      input.value = "";
+      
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userMessage })
+    })
+    .then(res => res.json())
+    .then(data => {
+      chatlog.innerHTML += `<div><strong>Nilay:</strong> ${data.reply}</div>`;
+      chatlog.scrollTop = chatlog.scrollHeight;
+    })
+    .catch(() => {
+      chatlog.innerHTML += `<div><strong>Nilay:</strong> Fehler bei Verbindung zur KI.</div>`;
+    });
+
+    // Entferne alten Textbaustein
+
+        chatlog.innerHTML += `<div><strong>Nilay:</strong> "${userMessage}" klingt spannend! Was möchtest du sonst noch planen?</div>`;
+        chatlog.scrollTop = chatlog.scrollHeight;
+      }, 800);
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('workshopPlan');
+      html2pdf().from(element).save('Workshop-Plan.pdf');
+    }
+  </script>
+</body>
+</html>
